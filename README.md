@@ -9,13 +9,38 @@ A high-performance API for Transport and Warehouse Management built with **Bun**
 ## Features
 
 - **High Performance**: Bun runtime + ElysiaJS for low-latency APIs
-- **Modular Architecture**: Feature-based modules (Organizational, HR, Fleet, WMS, TMS, Clients, Finance)
+- **Domain-Driven modular architecture**: Feature-based modules focused on domains (Organizational, HR, Fleet, WMS, TMS, Clients, Finance)
+- **State-driven transport lifecycle**: Trips implemented with a finite-state machine to ensure safe status transitions and lifecycle traceability
+- **Transaction-safe inventory workflows**: Inventory operations are designed to be transaction-safe, preventing negative stock and ensuring consistency
 - **Type Safety**: TypeScript throughout the codebase
 - **Prisma ORM**: Strongly-typed database access with Prisma Client and extensions
 - **Audit & Soft Delete**: Automatic audit logging and soft-delete behavior via Prisma extensions (`src/lib/prisma.ts`)
 - **Business Logic**: Trip finite-state machine to ensure valid lifecycle transitions
 - **Precision Math**: Decimal-based calculations for financials and weights (`src/utils/math.ts`)
 - **Interactive Docs**: Swagger UI available at `/swagger`
+
+## Diagrams
+
+Simple domain relationship diagrams (Mermaid):
+
+```mermaid
+graph LR
+  Trip --> Shipment
+  Shipment --> Vehicle
+```
+
+```mermaid
+graph LR
+  Warehouse --> Inventory
+  Inventory --> Product
+```
+
+## Who is this for?
+
+- Logistics companies
+- Fleet operators
+- SaaS builders
+- Internal enterprise systems
 
 ## Requirements Specification
 
@@ -100,7 +125,7 @@ Below are concise, testable rules for the main entities.
 ## Why Bun & Elysia
 
 - **Performance**: Bun gives a fast runtime and tooling consolidation.
-- **Developer Experience**: Elysia provides a lightweight, type-safe framework for APIs.
+- **Developer Experience**: Elysia provides a lightweight, type-safe framework for APIs and maps well to a domain-driven modular architecture.
 - **Tooling**: Bun reduces dev dependency bloat (runtime, test runner, bundler).
 
 ## Table of Contents
@@ -273,7 +298,8 @@ src/
 ## Development Notes
 
 - Use `Decimal` for financial/weight calculations (`src/utils/math.ts`).
-- Trips are protected by a finite state machine to prevent invalid transitions.
+- **State-driven transport lifecycle**: Trips use a finite-state machine to enforce valid transitions and capture lifecycle timestamps (start/end).
+- **Transaction-safe inventory workflows**: Inventory operations (receive, reserve, pick, adjust) use DB transactions to prevent inconsistent or negative quantities.
 - Prisma extensions include audit logging and soft-delete behavior for selected models.
 
 ## API Documentation
